@@ -10,23 +10,55 @@ queimada, sempre com folga antes e depois da fala.
 Esse comando baixa, transcreve, escolhe os 12 melhores momentos, mostra a
 lista para você aprovar e renderiza. Nada mais é necessário.
 
-## Por que o pipeline está aqui em vez dos clipes prontos
+## Como o acesso ao Drive foi resolvido
 
-A sessão remota do Claude Code não alcança o arquivo. Os quatro caminhos
-possíveis foram testados e todos estão fechados:
+A politica de rede deste ambiente bloqueia `drive.google.com`,
+`drive.usercontent.google.com`, `docs.google.com` e `*.googleusercontent.com`,
+e o conector do Drive corta em 10 MB — o arquivo tinha 12,3 GB. Dos hosts
+liberados, `www.googleapis.com` serve a Drive API.
 
-| Caminho | Resultado |
-|---|---|
-| `curl`/`gdown` nos hosts do Drive | 403 no CONNECT do proxy — `drive.google.com`, `drive.usercontent.google.com`, `docs.google.com` e `*.googleusercontent.com` estão fora da política de rede do ambiente |
-| API do Drive via `www.googleapis.com` / `drive.googleapis.com` (hosts liberados) | `403 The request is missing a valid API key` — o arquivo é público (`type: anyone`), falta só uma chave de API, que a sessão não tem |
-| Conector do Drive (`download_file_content`) | `File too large for download, over limit of 10 MB` — o arquivo tem 12.336 MB |
-| Outro ambiente com rede diferente | só existe um ambiente na conta (`Default`), com esta mesma política |
+Chave de API **nao** resolve: a Drive API responde
+`Requests to this API drive method google.apps.drive.v3.DriveFiles.Get are blocked`
+para autenticacao por chave, no download e nos metadados. O erro
+`API key not valid` que aparece antes disso vem do gateway, antes da checagem
+do metodo — passar nele nao significa que o metodo aceita chave.
 
-Para rodar tudo dentro da sessão, basta liberar `drive.usercontent.google.com`
-na política de rede do ambiente (Claude Code on the web → configurações do
-ambiente → acesso de rede). Hosts que o ambiente **já** libera, caso seja mais
-prático hospedar o arquivo: `github.com`, `objects.githubusercontent.com`,
-`s3.amazonaws.com`, `www.googleapis.com`.
+O que funciona e um **access token OAuth** (`ya29...`), obtido no
+[OAuth Playground](https://developers.google.com/oauthplayground) com o escopo
+`https://www.googleapis.com/auth/drive.readonly`: o Step 1 autoriza e o Step 2
+("Exchange authorization code for tokens") devolve o token. O codigo `AQ...`
+do Step 1 nao serve sozinho.
+
+`00_baixar_drive.sh` usa esse token com retomada por range, relendo o `.token`
+a cada tentativa — um token que expira no meio pode ser trocado sem reiniciar
+o download. Na pratica os 12,3 GB vieram a 78 MB/s, em 2,5 min.
+
+## A transcricao, sem HuggingFace
+
+`huggingface.co` e o CDN da OpenAI tambem estao bloqueados, entao o
+faster-whisper nao baixa os proprios pesos. A saida foi trocar a runtime:
+`sherpa-onnx` (PyPI, liberado) com o **Whisper small multilingue em ONNX
+int8**, que existe como asset de release no GitHub, que passa.
+
+O sherpa-onnx nao devolve timestamp por palavra. `chunks.py` contorna isso
+montando blocos **contiguos** que comecam e terminam no meio de um silencio de
+1s ou mais — as fronteiras de bloco viram, por construcao, pontos de corte que
+nunca caem dentro de uma frase. `worker.py` transcreve em paralelo: 4 processos
+com 1 thread cada rendem ~1,9x mais que 1 processo com 4 threads.
+
+Empacotar os blocos perto de 28s importa: o Whisper processa uma janela de 30s
+independentemente do tamanho real do bloco, entao blocos de 12s desperdicam
+mais da metade do custo. Reempacotar 379 blocos em 215 cortou quase um terco
+do trabalho.
+
+`verificar.py` confere cada fronteira escolhida contra o mapa de silencios.
+Isso importa: o divisor tem um caminho que fatia "no seco" quando um trecho
+passa de 28s sem pausa, e essas fatias **nao** sao pontos de corte validos.
+Na producao dos 12 cortes, 7 fronteiras cairam ali. Quando isso acontecer,
+transcreva so aquela regiao em granularidade fina (blocos de ~5s, cortando em
+todo silencio >= 0,35s) e reposicione.
+
+`medir.py` mede a posicao dos rostos por corte, para o crop fixo.
 
 ## Os passos, se quiser rodar separado
 
@@ -95,16 +127,15 @@ Leia o `plano_01.json` antes de renderizar. Se vários segmentos vierem com
 
 ## O que foi testado
 
-Sem o vídeo real, a validação foi feita com material sintético:
+Validado na producao dos 12 cortes do episodio com Guga Gadelha (81 min, 4K),
+em `guga-gadelha/`:
 
-- **Render:** vídeo gerado com `testsrc`, cortes conferidos com `ffprobe` —
-  durações exatas (21,0s / 20,0s / 38,7s), saída 1080x1920, tabela gerada.
-- **Seleção:** transcrições sintéticas de 20 e 46 min. Na de 46 min saem 12
-  cortes; com o piso de nota em 6.0, 9 — todos com gancho na abertura. Antes da
-  regra de sinal forte, uma janela de conversa fiada (nota 3,68) entrava por
-  forma; depois dela, não entra mais.
-- **Cadeia inteira:** transcrição → `03_selecionar.py` → `02_render.py` →
-  clipe 1080x1920 de 38,7s conferido.
+- **Download:** 12.336.288.523 bytes, tamanho conferido, `ffprobe` limpo.
+- **Transcricao:** 215 blocos, 14.514 palavras, 81,2 min de cobertura.
+- **Fronteiras:** as 24 verificadas contra 1.398 silencios; 7 reposicionadas.
+- **Render:** 12/12 em 1080x1920, duracao batendo em +/-0,03s, audio AAC
+  estereo, enquadramento conferido por frame.
 
-O que **não** foi testado: o download do Drive (`gdown`) e a transcrição
-(`faster-whisper`), porque ambos dependem de rede bloqueada nesta sessão.
+O `03_selecionar.py` (curadoria automatica) foi validado a parte, com
+transcricoes sinteticas de 20 e 46 min — nos 12 cortes reais a selecao foi
+feita por leitura da transcricao inteira, que rende melhor que a heuristica.
