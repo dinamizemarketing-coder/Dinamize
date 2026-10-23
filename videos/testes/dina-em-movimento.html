@@ -1,0 +1,731 @@
+<title>Dina em movimento</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a stage (the scene) beside a control/readout panel, then what the skill applied. */
+:root {
+  --bg: #EDF0FA;
+  --surface: #FFFFFF;
+  --fg: #151935;
+  --muted: #59608A;
+  --line: #D5DAEF;
+  --accent: #2E45E3;
+  --accent-fg: #FFFFFF;
+
+  --c-wall: #DDE3FA;
+  --c-floor: #C6CFF1;
+  --c-base: #AEB9E6;
+  --c-shadow: rgba(28, 38, 110, 0.18);
+  --c-body: #3149F0;
+  --c-limb: #2134C2;
+  --c-belly: #5A6EFF;
+  --c-eye: #FFFFFF;
+  --c-pupil: #11132E;
+  --c-cheek: #FF8DB0;
+  --c-sun: #FFC43D;
+  --c-leaf: #3AA367;
+  --c-leaf2: #2C8752;
+  --c-pot: #F0B544;
+  --c-pot-rim: #DE9E2C;
+  --c-mug: #FFFFFF;
+  --c-steam: #93A0D3;
+  --c-pivot: #FF4F2E;
+
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1023; --surface: #161A35; --fg: #E8EBFF; --muted: #9CA3CB; --line: #2A3062;
+    --accent: #8E9CFF; --accent-fg: #0D1023;
+    --c-wall: #1C2247; --c-floor: #252C5A; --c-base: #333B72; --c-shadow: rgba(0, 0, 0, 0.38);
+    --c-mug: #E9ECFF; --c-steam: #C3CAF2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1023; --surface: #161A35; --fg: #E8EBFF; --muted: #9CA3CB; --line: #2A3062;
+  --accent: #8E9CFF; --accent-fg: #0D1023;
+  --c-wall: #1C2247; --c-floor: #252C5A; --c-base: #333B72; --c-shadow: rgba(0, 0, 0, 0.38);
+  --c-mug: #E9ECFF; --c-steam: #C3CAF2;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-block: 32px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 28px;
+}
+header { display: grid; gap: 8px; max-width: 62ch; }
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(34px, 6vw, 54px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+h2 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+p { margin: 0; }
+.lede { color: var(--muted); font-size: 17px; }
+
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 820px) { .main { grid-template-columns: minmax(0, 1fr); } }
+
+.stage {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--c-wall);
+  touch-action: pan-y;
+}
+.stage svg { display: block; width: 100%; height: auto; }
+.hint { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.controls { display: grid; gap: 12px; }
+.btn {
+  font: 600 15px/1 var(--f-body);
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--fg);
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), background-color 150ms;
+}
+.btn:active { transform: scale(0.97); }
+.btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn:focus-visible, .seg button:focus-visible, .check input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button {
+  flex: 1;
+  font: 500 13px/1 var(--f-mono);
+  padding: 10px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+.label { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--f-mono); }
+.check { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; }
+
+.readout { display: grid; gap: 0; margin: 0; }
+.readout div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.readout dt { color: var(--muted); }
+.readout dd { margin: 0; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+.applied { display: grid; gap: 16px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 0 28px;
+}
+.item { padding: 14px 0; border-top: 1px solid var(--line); display: grid; gap: 4px; min-width: 0; }
+.item b { font-weight: 600; }
+.item span { color: var(--muted); font-size: 14px; }
+.item code { font-family: var(--f-mono); font-size: 12.5px; }
+
+.next { display: grid; gap: 10px; max-width: 70ch; }
+.next ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--muted); }
+.next q { color: var(--fg); }
+
+/* Scene drawing */
+.wall { fill: var(--c-wall); }
+.floor { fill: var(--c-floor); }
+.baseboard { stroke: var(--c-base); stroke-width: 2; }
+.shadow { fill: var(--c-shadow); }
+.char { fill: var(--c-body); }
+.limb { fill: none; stroke: var(--c-limb); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+.foot, .hand { fill: var(--c-limb); }
+.belly { fill: var(--c-belly); }
+.eye-white { fill: var(--c-eye); }
+.pupil { fill: var(--c-pupil); }
+.glint { fill: var(--c-eye); }
+.lid { fill: var(--c-body); }
+.lash { fill: none; stroke: var(--c-pupil); stroke-width: 2.2; }
+.mouth { fill: var(--c-pupil); }
+.cheek { fill: var(--c-cheek); }
+.antenna { fill: none; stroke: var(--c-limb); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.ant-ball { fill: var(--c-sun); }
+.stem { fill: none; stroke: var(--c-leaf2); stroke-width: 3; stroke-linecap: round; }
+.leaf-a { fill: var(--c-leaf); }
+.leaf-b { fill: var(--c-leaf2); }
+.pot { fill: var(--c-pot); }
+.pot-rim { fill: var(--c-pot-rim); }
+.mug { fill: var(--c-mug); }
+.mug-handle { fill: none; stroke: var(--c-mug); stroke-width: 4; }
+.mug-stripe { fill: var(--accent); }
+.steam { fill: none; stroke: var(--c-steam); stroke-width: 2.5; stroke-linecap: round; }
+.pivot { display: none; fill: none; stroke: var(--c-pivot); stroke-width: 1.6; }
+.show-pivots .pivot { display: inline; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Teste da rossark-motion-skill</span>
+    <h1>Dina em movimento</h1>
+    <p class="lede">Uma personagem desenhada e animada só com código, seguindo o método da skill. Ela cai, aterrissa, acena e depois continua viva sem nunca congelar.</p>
+  </header>
+
+  <section class="main" aria-label="Cena animada">
+    <div>
+      <div class="stage" id="stageBox">
+        <svg id="scene" viewBox="0 0 480 340" role="img" aria-label="Uma personagem azul e arredondada, com antena amarela, ao lado de uma planta e de uma caneca com vapor">
+          <defs>
+            <clipPath id="whiteL"><ellipse cx="-19" cy="-108" rx="12" ry="14.5"/></clipPath>
+            <clipPath id="lidClipL"><ellipse cx="-19" cy="-108" rx="14" ry="16.5"/></clipPath>
+            <clipPath id="whiteR"><ellipse cx="20" cy="-107" rx="12.5" ry="15"/></clipPath>
+            <clipPath id="lidClipR"><ellipse cx="20" cy="-107" rx="14.5" ry="17"/></clipPath>
+          </defs>
+
+          <rect class="wall" x="0" y="0" width="480" height="290"/>
+          <rect class="floor" x="0" y="290" width="480" height="50"/>
+          <line class="baseboard" x1="0" y1="290" x2="480" y2="290"/>
+
+          <g id="plant"></g>
+          <g id="mugGroup">
+            <g id="steam"></g>
+            <path class="mug-handle" d="M414 268 C 426 268 426 284 414 284"/>
+            <rect class="mug" x="385" y="262" width="30" height="28" rx="5"/>
+            <rect class="mug-stripe" x="385" y="271" width="30" height="5"/>
+          </g>
+
+          <ellipse id="shadow" class="shadow" cx="240" cy="292" rx="58" ry="7"/>
+
+          <g transform="translate(240 290)">
+            <g id="body">
+              <path id="legL" class="limb"/>
+              <path id="legR" class="limb"/>
+              <ellipse id="footL" class="foot" rx="11" ry="6.5"/>
+              <ellipse id="footR" class="foot" rx="11" ry="6.5"/>
+              <circle class="pivot" cx="0" cy="0" r="4"/>
+
+              <g id="upper">
+                <path id="armL" class="limb"/>
+                <circle id="handL" class="hand" r="6"/>
+                <path id="armR" class="limb"/>
+                <circle id="handR" class="hand" r="6"/>
+
+                <path class="char" d="M -50 -60 C -50 -122 -36 -151 1 -151 C 40 -151 53 -120 52 -62 C 51 -33 33 -24 0 -24 C -33 -24 -50 -34 -50 -60 Z"/>
+                <ellipse id="belly" class="belly" cx="1" cy="-54" rx="27" ry="17"/>
+
+                <g id="face">
+                  <g id="antenna">
+                    <path id="antStem" class="antenna"/>
+                    <circle id="antBall" class="ant-ball" r="6.5"/>
+                    <circle id="antPivot" class="pivot" r="3"/>
+                  </g>
+                  <g id="cheeks">
+                    <ellipse class="cheek" cx="-35" cy="-90" rx="7.5" ry="4.5"/>
+                    <ellipse class="cheek" cx="36" cy="-89" rx="7.5" ry="4.5"/>
+                  </g>
+                  <g id="features">
+                    <ellipse class="eye-white" cx="-19" cy="-108" rx="12" ry="14.5"/>
+                    <g clip-path="url(#whiteL)">
+                      <circle id="pupilL" class="pupil" r="6.8"/>
+                      <circle id="glintL" class="glint" r="2"/>
+                    </g>
+                    <g clip-path="url(#lidClipL)">
+                      <ellipse id="lidUL" class="lid"/>
+                      <ellipse id="lidLL" class="lid"/>
+                    </g>
+                    <g clip-path="url(#whiteL)"><ellipse id="lashL" class="lash"/></g>
+
+                    <ellipse class="eye-white" cx="20" cy="-107" rx="12.5" ry="15"/>
+                    <g clip-path="url(#whiteR)">
+                      <circle id="pupilR" class="pupil" r="6.8"/>
+                      <circle id="glintR" class="glint" r="2"/>
+                    </g>
+                    <g clip-path="url(#lidClipR)">
+                      <ellipse id="lidUR" class="lid"/>
+                      <ellipse id="lidLR" class="lid"/>
+                    </g>
+                    <g clip-path="url(#whiteR)"><ellipse id="lashR" class="lash"/></g>
+
+                    <path id="mouth" class="mouth"/>
+                  </g>
+                  <circle class="pivot" cx="0" cy="-95" r="4"/>
+                </g>
+
+                <circle class="pivot" cx="-45" cy="-74" r="3"/>
+                <circle class="pivot" cx="46" cy="-76" r="3"/>
+                <circle id="elbowL" class="pivot" r="3"/>
+                <circle id="elbowR" class="pivot" r="3"/>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <p class="hint">Passe o cursor (ou arraste o dedo) sobre o palco: a Dina acompanha com o olhar e volta à rotina quando você sai.</p>
+    </div>
+
+    <aside class="panel" aria-label="Controles">
+      <div class="controls">
+        <button id="replay" class="btn primary" type="button">Repetir entrada</button>
+        <span class="label">Velocidade</span>
+        <div class="seg" role="group" aria-label="Velocidade">
+          <button type="button" id="speed025" data-speed="0.25" aria-pressed="false">0,25×</button>
+          <button type="button" id="speed05" data-speed="0.5" aria-pressed="false">0,5×</button>
+          <button type="button" id="speed1" data-speed="1" aria-pressed="true">1×</button>
+        </div>
+        <label class="check"><input type="checkbox" id="pivots"> Mostrar pivôs</label>
+        <label class="check"><input type="checkbox" id="reduced"> Movimento reduzido</label>
+      </div>
+      <dl class="readout" aria-live="off">
+        <div><dt>Tempo da cena</dt><dd id="r-t">0 ms</dd></div>
+        <div><dt>Altura do chão</dt><dd id="r-lift">0</dd></div>
+        <div><dt>Escala vertical</dt><dd id="r-sy">1.000</dd></div>
+        <div><dt>Inclinação do corpo</dt><dd id="r-lean">0.0°</dd></div>
+        <div><dt>Inclinação da cabeça</dt><dd id="r-tilt">0.0°</dd></div>
+        <div><dt>Giro da cabeça</dt><dd id="r-yaw">0.00</dd></div>
+        <div><dt>Pálpebra</dt><dd id="r-lid">0.00</dd></div>
+        <div><dt>Olhar (x, y)</dt><dd id="r-look">0.00, 0.00</dd></div>
+      </dl>
+    </aside>
+  </section>
+
+  <section class="applied">
+    <h2>O que a skill aplicou</h2>
+    <div class="grid">
+      <div class="item"><b>Um único relógio</b><span>Cada parte é calculada a partir do mesmo tempo. Nada sai de sincronia e nada salta.</span></div>
+      <div class="item"><b>Poses que fluem</b><span>A entrada passa pelas poses com velocidade contínua (<code>flow</code>), sem parar em cada uma como um robô.</span></div>
+      <div class="item"><b>Queda com gravidade</b><span>Ela paira, cai acelerando, estica 8% e amassa 20% no contato. A largura compensa para manter o volume.</span></div>
+      <div class="item"><b>Pés pendurados no ar</b><span>No ar os pés apontam para baixo, um joelho dobra um pouco e a sombra cresce conforme ela desce.</span></div>
+      <div class="item"><b>Atraso em vez de mola</b><span>A antena, os antebraços e a cabeça chegam 80 a 110 ms depois do corpo, sem quicar.</span></div>
+      <div class="item"><b>Piscada com tempo certo</b><span>Fecha em 110 ms, segura 40 ms e reabre em 190 ms. Ela pisca ao virar a cabeça e, às vezes, duas vezes.</span></div>
+      <div class="item"><b>Nunca congela</b><span>Respiração, balanço dos braços e troca de peso continuam mesmo quando ela está parada.</span></div>
+      <div class="item"><b>Esquerda diferente da direita</b><span>Braços, olhos e fases nunca são espelhados. Pose simétrica parece manequim.</span></div>
+      <div class="item"><b>Uma ação, poucas rotinas</b><span>A ação principal é a chegada. A planta balança e o vapor sobe, mas ficam discretos.</span></div>
+      <div class="item"><b>Movimento reduzido e pausa</b><span>Com a opção ligada, aparece só o quadro final, parado. Fora da tela, o relógio para.</span></div>
+    </div>
+  </section>
+
+  <section class="next">
+    <h2>Como usar nos seus projetos</h2>
+    <p>Em uma sessão do Claude Code com este repositório, a skill entra sozinha quando o pedido é sobre animação. Alguns exemplos:</p>
+    <ul>
+      <li><q>Anime o mascote da tela de boas-vindas para ele parecer vivo.</q></li>
+      <li><q>Faça este ícone se desenhar uma vez quando aparecer.</q></li>
+      <li><q>Recrie o movimento deste vídeo de referência.</q> (as ferramentas medem o vídeo quadro a quadro com ffmpeg)</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(() => {
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const $ = (id) => document.getElementById(id);
+  const set = (el, attrs) => { for (const k in attrs) el.setAttribute(k, attrs[k]); };
+  const el = (tag, attrs, parent) => { const n = document.createElementNS(SVGNS, tag); set(n, attrs); parent.appendChild(n); return n; };
+  const R = Math.PI / 180;
+  const f2 = (v) => v.toFixed(2);
+
+  // ---- Engine: the same math as the skill's motion.ts, on requestAnimationFrame ----
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t;
+    const sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dsx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => {
+      if (x <= 0) return 0;
+      if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) {
+        const d = sx(t) - x;
+        if (Math.abs(d) < 1e-6) break;
+        const dd = dsx(t);
+        if (Math.abs(dd) < 1e-6) break;
+        t -= d / dd;
+      }
+      if (t < 0 || t > 1 || Math.abs(sx(t) - x) > 1e-4) {
+        let lo = 0, hi = 1; t = x;
+        for (let i = 0; i < 40; i++) { if (sx(t) < x) lo = t; else hi = t; t = (lo + hi) / 2; }
+      }
+      return sy(t);
+    };
+  }
+  const EASE_IN_OUT = bezier(0.77, 0, 0.175, 1);
+  const EASE_OUT = bezier(0.23, 1, 0.32, 1);
+
+  function track(t, keys) {
+    if (t <= keys[0][0]) return keys[0][1];
+    for (let i = 1; i < keys.length; i++) {
+      const k1 = keys[i];
+      if (t <= k1[0]) {
+        const k0 = keys[i - 1];
+        const span = k1[0] - k0[0];
+        const p = span > 0 ? (t - k0[0]) / span : 1;
+        const e = k1[2] === "out" ? EASE_OUT(p) : EASE_IN_OUT(p);
+        return k0[1] + (k1[1] - k0[1]) * e;
+      }
+    }
+    return keys[keys.length - 1][1];
+  }
+  function flow(t, k) {
+    const n = k.length;
+    if (t <= k[0][0]) return k[0][1];
+    if (t >= k[n - 1][0]) return k[n - 1][1];
+    let i = 0;
+    while (k[i + 1][0] < t) i++;
+    const slope = (j) => (k[j + 1][1] - k[j][1]) / (k[j + 1][0] - k[j][0]);
+    const tangent = (j) => {
+      if (j === 0 || j === n - 1) return 0;
+      const a = slope(j - 1), b = slope(j);
+      if (a * b <= 0) return 0;
+      const h0 = k[j][0] - k[j - 1][0], h1 = k[j + 1][0] - k[j][0];
+      const w0 = 2 * h1 + h0, w1 = h1 + 2 * h0;
+      return (w0 + w1) / (w0 / a + w1 / b);
+    };
+    const h = k[i + 1][0] - k[i][0];
+    const s = (t - k[i][0]) / h, s2 = s * s, s3 = s2 * s;
+    return (2 * s3 - 3 * s2 + 1) * k[i][1] + (s3 - 2 * s2 + s) * h * tangent(i)
+      + (-2 * s3 + 3 * s2) * k[i + 1][1] + (s3 - s2) * h * tangent(i + 1);
+  }
+  function seg(t, a, b, curve = "out") {
+    if (t <= a) return 0;
+    if (t >= b) return 1;
+    const p = (t - a) / (b - a);
+    return curve === "out" ? EASE_OUT(p) : EASE_IN_OUT(p);
+  }
+  const wave = (t, period, phase = 0) => Math.sin((t / period + phase) * Math.PI * 2);
+  const loop = (t, period, phase = 0) => { const p = (t / period + phase) % 1; return p < 0 ? p + 1 : p; };
+  const bell = (p) => Math.sin(Math.PI * Math.min(1, Math.max(0, p)));
+  const seeded = (i, salt = 0) => { const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453; return x - Math.floor(x); };
+
+  // ---- Tokens: every number that shapes the motion ----
+  const END = 4400;           // the entrance is a one-shot; after it only idle life runs
+  const FACE_LOOP = 8000;     // the face's choreography loops
+  const LAG_BODY = 110, LAG_LIMB = 90, LAG_ANT = 80;
+
+  // Key poses of the entrance (scene ms). The clock starts mid-move: she enters already falling.
+  const ACT = {
+    liftIn: [[-300, 430], [650, 100], [900, 80], [1300, 90]],
+    syLand: [[1650, 1.08], [1715, 0.8], [1870, 1.05], [2030, 0.985], [2200, 1]],
+    lean:   [[-300, -7], [650, 3], [1300, -2], [1650, 0], [1800, 2.5], [2300, 0], [2650, -4], [3900, -4], [4300, 0]],
+    shift:  [[0, 0], [2300, 0], [2650, -4], [3900, -4], [4300, 1]],
+    tilt:   [[0, 0], [2500, 0], [2750, 6], [3900, 6], [4300, 0]],
+    armRa:  [[-300, 22], [700, 30], [1300, 34], [1480, 96], [1650, 100], [1720, 72], [2000, 20], [2350, 18], [2650, 78], [3900, 78], [4300, 16]],
+    armRe:  [[-300, 12], [1300, 10], [1480, 4], [1720, -12], [2000, 10], [2350, 8], [2650, 98], [3900, 98], [4300, 8]],
+    armLa:  [[-300, 18], [700, 26], [1300, 30], [1460, 88], [1650, 96], [1730, 78], [2080, 15]],
+    armLe:  [[-300, 14], [1300, 12], [1460, 2], [1730, -6], [2080, 14], [2650, 22], [3900, 22], [4300, 12]],
+    cheek:  [[0, 0], [1650, 0], [1850, 0.9], [3800, 0.9], [4200, 0]],
+    mouth:  [[0, 0], [1650, 0], [1760, 0.55], [2050, 0.15], [2650, 0.15], [2800, 0.85], [2980, 0.3], [3180, 0.75], [3420, 0.15], [4300, 0]],
+  };
+  // The face loop (track keys, one move each). The last key equals the first.
+  const FACE = {
+    lookX: [[0, 0], [4580, 0], [5080, -0.85], [5900, -0.85], [6500, 0.8], [7350, 0.8], [7850, 0], [8000, 0]],
+    lookY: [[0, 0], [4580, 0], [5080, 0.2], [5900, 0.2], [6500, 0.6], [7350, 0.6], [7850, 0], [8000, 0]],
+    yaw:   [[0, 0], [4630, 0], [5180, -0.35], [5950, -0.35], [6600, 0.3], [7400, 0.3], [7900, 0], [8000, 0]],
+    lid:   [[0, 0],
+            [2100, 0], [2210, 1], [2250, 1], [2440, 0, "out"],
+            [2490, 0], [2600, 1], [2640, 1], [2830, 0, "out"],
+            [4580, 0], [4690, 1], [4730, 1], [4920, 0, "out"],
+            [5920, 0], [6030, 1], [6070, 1], [6260, 0, "out"],
+            [7400, 0], [7510, 1], [7550, 1], [7740, 0, "out"], [8000, 0]],
+    cheek: [[0, 0], [6600, 0], [6900, 0.6, "out"], [7300, 0.6], [7700, 0], [8000, 0]],
+  };
+
+  // ---- Channels: key pose + idle + follow-through ----
+  const leanAt = (s, i) => flow(s, ACT.lean) + 1.5 * wave(i, 4500, 0.1);
+  function liftAt(s, i) {
+    if (s < 1300) return flow(s, ACT.liftIn) + 4 * wave(i, 1700, 0.25) * (1 - seg(s, 1000, 1300, "inOut"));
+    if (s < 1650) { const k = (s - 1300) / 350; return 90 * (1 - k * k); }
+    return 0;
+  }
+  function syAt(s, i) {
+    const breathe = 0.013 * wave(i, 2600) * (1 - seg(s, 1000, 1300, "inOut") + seg(s, 2150, 2650, "inOut"));
+    let base = 1;
+    if (s >= 1300 && s < 1650) base = 1 + 0.08 * (s - 1300) / 350;
+    else if (s >= 1650) base = flow(s, ACT.syLand);
+    return base + breathe;
+  }
+  const tiltAt = (s, i, lag) => flow(s, ACT.tilt) + 2 * wave(i, 4600, 0.2) - 0.45 * leanAt(s - lag, i - lag);
+  function antA1(s, i, live) {
+    const d = live ? LAG_LIMB : 0, d2 = live ? 70 : 0, lag = live ? LAG_BODY : 0;
+    const P = (ss, ii) => leanAt(ss, ii) + tiltAt(ss, ii, lag);
+    return 5 * wave(i, 2800, 0.1) + 0.5 * (P(s - d, i - d) - P(s, i)) + 45 * (syAt(s - d2, i - d2) - 1);
+  }
+  function arm(s, i, ka, ke, ph, live) {
+    const d = live ? LAG_LIMB : 0;
+    const a = flow(s, ka) + 3 * wave(i, 3000, ph) + 1.5 * wave(i, 1800, ph + 0.3);
+    const e = flow(s, ke) + 4 * wave(i, 2250, ph + 0.6) + 0.45 * (flow(s - d, ka) - flow(s, ka));
+    return { a, e };
+  }
+
+  // ---- Static scenery built once ----
+  const plant = $("plant");
+  const STEMS = [
+    { tip: [-22, -62], ctrl: [-4, -36], leaves: [[-22, -62, -150, "a"], [-9, -34, 172, "b"]] },
+    { tip: [4, -92], ctrl: [-6, -50], leaves: [[4, -92, -84, "a"], [-2, -52, -18, "b"], [-3, -66, -160, "a"]] },
+    { tip: [24, -58], ctrl: [14, -30], leaves: [[24, -58, -32, "b"], [12, -30, 8, "a"]] },
+  ];
+  const stemEls = STEMS.map((st) => {
+    const g = el("g", {}, plant);
+    el("path", { class: "stem", d: `M0 0 Q ${st.ctrl[0]} ${st.ctrl[1]} ${st.tip[0]} ${st.tip[1]}` }, g);
+    const leaves = st.leaves.map(([x, y, ang, tone]) => {
+      const w = el("g", {}, g);
+      el("path", { class: tone === "a" ? "leaf-a" : "leaf-b", d: "M0 0 Q 8 -7 19 0 Q 8 7 0 0 Z", transform: `translate(${x} ${y}) rotate(${ang})` }, w);
+      return { w, x, y };
+    });
+    return { g, leaves };
+  });
+  el("circle", { class: "pivot", cx: 78, cy: 258, r: 4 }, plant);
+  el("path", { class: "pot", d: "M60 290 L63 262 L93 262 L96 290 Z" }, plant);
+  el("rect", { class: "pot-rim", x: 57, y: 256, width: 42, height: 9, rx: 3 }, plant);
+
+  const steamG = $("steam");
+  const wisps = [392, 400, 408].map((x) => ({ x, p: el("path", { class: "steam", d: "M0 0 C -4 -5 4 -9 0 -14 C -4 -19 4 -23 0 -28" }, steamG) }));
+
+  // ---- Elements updated every frame ----
+  const E = {};
+  ["shadow", "body", "upper", "legL", "legR", "footL", "footR", "armL", "armR", "handL", "handR", "elbowL", "elbowR",
+   "belly", "face", "features", "cheeks", "antenna", "antStem", "antBall", "antPivot",
+   "pupilL", "pupilR", "glintL", "glintR", "lidUL", "lidLL", "lidUR", "lidLR", "lashL", "lashR", "mouth"].forEach((id) => { E[id] = $(id); });
+  const RO = {}; ["t", "lift", "sy", "lean", "tilt", "yaw", "lid", "look"].forEach((k) => { RO[k] = $("r-" + k); });
+
+  const EYES = [
+    { cx: -19, cy: -108, rx: 12, ry: 14.5, pupil: E.pupilL, glint: E.glintL, up: E.lidUL, lo: E.lidLL, lash: E.lashL },
+    { cx: 20, cy: -107, rx: 12.5, ry: 15, pupil: E.pupilR, glint: E.glintR, up: E.lidUR, lo: E.lidLR, lash: E.lashR },
+  ];
+
+  // Pointer attention: eased toward its target every frame, so the gaze never jumps.
+  const pointer = { inside: false, x: 0, y: 0, att: 0, lx: 0, ly: 0 };
+
+  function render(s, i, live, dt) {
+    const fT = loop(i, FACE_LOOP) * FACE_LOOP;
+    const lagB = live ? LAG_BODY : 0;
+
+    const lift = liftAt(s, i);
+    const sy = syAt(s, i);
+    const sx = 1 / Math.pow(sy, 0.6);
+    const lean = leanAt(s, i);
+    const shift = flow(s, ACT.shift) + 3 * wave(i, 4800, 0.35) * seg(s, 2000, 2600, "inOut");
+    const hang = 1 - seg(s, 1560, 1640, "inOut");
+
+    // Face channels: the loop, plus entrance accents, plus the viewer's pointer.
+    let lookX = track(fT, FACE.lookX);
+    let lookY = track(fT, FACE.lookY) + 0.55 * (1 - seg(s, 1550, 1900, "inOut"));
+    let yaw = track(fT, FACE.yaw);
+    const lid = track(fT, FACE.lid);
+    const cheek = Math.max(flow(s, ACT.cheek), track(fT, FACE.cheek));
+    const mouth = flow(s, ACT.mouth);
+
+    if (live) {
+      const k = 1 - Math.exp(-dt / 220);
+      pointer.att += ((pointer.inside ? 1 : 0) - pointer.att) * k;
+      const hx = 240, hy = 290 - lift - 105;
+      const tx = Math.max(-1, Math.min(1, (pointer.x - hx) / 110));
+      const ty = Math.max(-0.8, Math.min(1, (pointer.y - hy) / 110));
+      const kl = 1 - Math.exp(-dt / 120);
+      pointer.lx += (tx - pointer.lx) * kl;
+      pointer.ly += (ty - pointer.ly) * kl;
+      const a = pointer.att;
+      lookX += (pointer.lx - lookX) * a;
+      lookY += (pointer.ly - lookY) * a;
+      yaw += (0.32 * pointer.lx - yaw) * a;
+    }
+    const tilt = tiltAt(s, i, lagB) - 3 * yaw;
+
+    // Body: rotate around the feet, squash with volume kept.
+    set(E.body, { transform: `translate(0 ${(-lift).toFixed(2)}) rotate(${lean.toFixed(3)}) scale(${sx.toFixed(4)} ${sy.toFixed(4)})` });
+    set(E.upper, { transform: `translate(${shift.toFixed(2)} 0)` });
+    const sh = Math.max(0.25, 1 - lift / 220);
+    set(E.shadow, { cx: (240 + shift * 0.6).toFixed(2), rx: (58 * sh).toFixed(2), ry: (7 * sh).toFixed(2) });
+
+    // Legs: planted on the floor, hanging limp in the air.
+    [[-1, -16, -18, E.legL, E.footL, 0], [1, 18, 20, E.legR, E.footR, 0.5]].forEach(([side, hipX, footX, leg, foot, ph]) => {
+      const hx = hipX + shift, hy = -30;
+      const fold = 1 - 0.14 * (0.5 + 0.5 * wave(i, 2300, ph));
+      const ax = footX + (hipX * 0.65 + shift - footX) * hang;
+      const ay = -6 + (hy + 27 * fold - -6) * hang;
+      set(leg, { d: `M${hx.toFixed(2)} ${hy} L${ax.toFixed(2)} ${ay.toFixed(2)}` });
+      const th = side * 72 * hang;
+      const dx = side * Math.cos(th * R), dy = side * Math.sin(th * R);
+      const fx = ax + 4 * dx, fy = ay + 4 * dy + 1.5;
+      set(foot, { cx: fx.toFixed(2), cy: fy.toFixed(2), transform: `rotate(${th.toFixed(2)} ${fx.toFixed(2)} ${fy.toFixed(2)})` });
+    });
+
+    // Arms: two segments around a round elbow; the forearm trails the upper arm.
+    const ra = arm(s, i, ACT.armRa, ACT.armRe, 0.15, live);
+    ra.e += 13 * wave(i, 760) * (seg(s, 2650, 2850) - seg(s, 3700, 3900));
+    const la = arm(s, i, ACT.armLa, ACT.armLe, 0.62, live);
+    [[-1, -45, -74, la, E.armL, E.handL, E.elbowL], [1, 46, -76, ra, E.armR, E.handR, E.elbowR]].forEach(([side, x, y, p, path, hand, elbow]) => {
+      const ex = x + side * 24 * Math.sin(p.a * R), ey = y + 24 * Math.cos(p.a * R);
+      const hx = ex + side * 20 * Math.sin((p.a + p.e) * R), hy = ey + 20 * Math.cos((p.a + p.e) * R);
+      set(path, { d: `M${x} ${y} L${ex.toFixed(2)} ${ey.toFixed(2)} L${hx.toFixed(2)} ${hy.toFixed(2)}` });
+      set(hand, { cx: hx.toFixed(2), cy: hy.toFixed(2) });
+      set(elbow, { cx: ex.toFixed(2), cy: ey.toFixed(2) });
+    });
+
+    // Head: tilt around the neck; 2.5D turn slides parts by their depth.
+    set(E.face, { transform: `rotate(${tilt.toFixed(3)} 0 -95)` });
+    set(E.features, { transform: `translate(${(yaw * 10).toFixed(2)} 0)` });
+    set(E.cheeks, { transform: `translate(${(yaw * 8).toFixed(2)} -90) scale(1 ${(1 + 0.15 * cheek).toFixed(3)}) translate(0 90)` });
+    set(E.belly, { cx: (1 + yaw * 9).toFixed(2) });
+
+    // Antenna: each segment reads its parent a beat earlier.
+    const a1 = antA1(s, i, live);
+    const dA = live ? LAG_ANT : 0;
+    const a2 = a1 + 7 * wave(i, 2800, 0.3) + 0.5 * (antA1(s - dA, i - dA, live) - a1);
+    const bx = 2 - yaw * 6, by = -149;
+    const mx = bx + 16 * Math.sin(a1 * R), my = by - 16 * Math.cos(a1 * R);
+    const tx = mx + 13 * Math.sin(a2 * R), ty = my - 13 * Math.cos(a2 * R);
+    set(E.antStem, { d: `M${bx.toFixed(2)} ${by} L${mx.toFixed(2)} ${my.toFixed(2)} L${tx.toFixed(2)} ${ty.toFixed(2)}` });
+    set(E.antBall, { cx: tx.toFixed(2), cy: ty.toFixed(2) });
+    set(E.antPivot, { cx: bx.toFixed(2), cy: by });
+
+    // Eyes: the pupil slides inside the white; lids close near the middle.
+    EYES.forEach((eye) => {
+      const px = eye.cx + lookX * 6.5, py = eye.cy + lookY * 6.5;
+      set(eye.pupil, { cx: px.toFixed(2), cy: py.toFixed(2) });
+      set(eye.glint, { cx: (px - 2.2).toFixed(2), cy: (py - 2.6).toFixed(2) });
+      const H = 2 * eye.ry;
+      const yu = eye.cy - eye.ry - 2.5 + lid * (0.85 * H + 2.5);
+      const yl = eye.cy + eye.ry - (lid * 0.15 + cheek * 0.28) * H;
+      const up = { cx: eye.cx, cy: (yu - eye.ry * 1.3).toFixed(2), rx: (eye.rx * 1.5).toFixed(2), ry: (eye.ry * 1.3).toFixed(2) };
+      set(eye.up, up);
+      set(eye.lash, up);
+      set(eye.lo, { cx: eye.cx, cy: (yl + eye.ry * 1.2).toFixed(2), rx: (eye.rx * 1.4).toFixed(2), ry: (eye.ry * 1.2).toFixed(2) });
+    });
+
+    // Mouth: opens with ease-out from the key poses.
+    const w = 10 + mouth * 1.5, depth = 3 + mouth * 9, mx0 = 1, my0 = -80;
+    set(E.mouth, { d: `M${(mx0 - w).toFixed(2)} ${my0} Q ${mx0} ${my0 + 3} ${(mx0 + w).toFixed(2)} ${my0} Q ${mx0} ${(my0 + 3 + depth * 1.4).toFixed(2)} ${(mx0 - w).toFixed(2)} ${my0} Z` });
+
+    // Plant: each stem sways around the pot; leaves add their own, a beat later.
+    stemEls.forEach((st, k) => {
+      set(st.g, { transform: `translate(78 258) rotate(${(2.2 * wave(i, 4200 + k * 350, seeded(k))).toFixed(3)})` });
+      st.leaves.forEach((lf, j) => {
+        const ang = 4 * wave(i, 3100, seeded(k, j + 1) + 0.15);
+        set(lf.w, { transform: `rotate(${ang.toFixed(3)} ${lf.x} ${lf.y})` });
+      });
+    });
+
+    // Steam: wisps rise and fade in and out, each with its own phase and speed.
+    wisps.forEach((wp, k) => {
+      const p = loop(i * (0.9 + 0.2 * seeded(k, 2)), 2700, k / 3 + seeded(k) * 0.1);
+      const x = wp.x + 2 * wave(i, 1900, seeded(k, 3));
+      set(wp.p, { transform: `translate(${x.toFixed(2)} ${(256 - p * 16).toFixed(2)})`, opacity: (0.8 * bell(p)).toFixed(3) });
+    });
+
+    RO.t.textContent = `${Math.round(Math.min(s, 99999))} ms`;
+    RO.lift.textContent = lift.toFixed(1);
+    RO.sy.textContent = sy.toFixed(3);
+    RO.lean.textContent = `${lean.toFixed(1)}°`;
+    RO.tilt.textContent = `${tilt.toFixed(1)}°`;
+    RO.yaw.textContent = f2(yaw);
+    RO.lid.textContent = f2(lid);
+    RO.look.textContent = `${f2(lookX)}, ${f2(lookY)}`;
+  }
+
+  // ---- Clock: one per scene, paused off screen, still with reduced motion ----
+  const reducedBox = $("reduced");
+  const replay = $("replay");
+  try { reducedBox.checked = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+  let T = 0, last = null, speed = 1, running = false, visible = true;
+
+  function draw(dt) {
+    if (reducedBox.checked) render(END, 0, false, 0);
+    else render(T, T, true, dt);
+  }
+  function frame(now) {
+    if (!running) return;
+    const dt = last == null ? 16 : Math.min(50, now - last);
+    last = now;
+    T += dt * speed;
+    draw(dt * speed);
+    requestAnimationFrame(frame);
+  }
+  function update() {
+    const want = visible && !reducedBox.checked && !document.hidden;
+    replay.disabled = reducedBox.checked;
+    if (want && !running) { running = true; last = null; requestAnimationFrame(frame); }
+    else if (!want) { running = false; draw(0); }
+  }
+
+  replay.addEventListener("click", () => { T = 0; draw(0); });
+  reducedBox.addEventListener("change", update);
+  document.addEventListener("visibilitychange", update);
+  $("pivots").addEventListener("change", (e) => { $("scene").classList.toggle("show-pivots", e.target.checked); });
+  document.querySelectorAll(".seg button").forEach((b) => {
+    b.addEventListener("click", () => {
+      speed = parseFloat(b.dataset.speed);
+      document.querySelectorAll(".seg button").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+    });
+  });
+
+  const svg = $("scene");
+  function toSvg(ev) {
+    const m = svg.getScreenCTM();
+    if (!m) return null;
+    const pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(m.inverse());
+  }
+  svg.addEventListener("pointermove", (ev) => { const p = toSvg(ev); if (p) { pointer.x = p.x; pointer.y = p.y; pointer.inside = true; } });
+  svg.addEventListener("pointerleave", () => { pointer.inside = false; });
+  svg.addEventListener("pointercancel", () => { pointer.inside = false; });
+  svg.addEventListener("pointerup", (ev) => { if (ev.pointerType !== "mouse") pointer.inside = false; });
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => { visible = entries[0].isIntersecting; update(); }).observe($("stageBox"));
+  }
+  draw(0);
+  update();
+})();
+</script>
