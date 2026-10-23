@@ -1,21 +1,21 @@
-<title>Auto Posto Santa Fé · rascunho</title>
+<title>Auto Posto Santa Fé</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;1,800&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-/* Layout: the vertical film beside its beat sheet. Brand colors are placeholders until the real ones arrive. */
+/* Layout: the vertical film beside its beat sheet. Brand: Shell red and yellow, Poppins ExtraBold Italic titles (see clientes/auto-posto-santa-fe.md). */
 :root {
   --bg: #0C0F14;
   --surface: #151A22;
   --fg: #EEF1F5;
   --muted: #8F98A6;
   --line: #262D38;
-  --brand: #0F5E63;
-  --brand-dark: #0A3E42;
-  --accent: #F28C28;
-  --f-display: "Barlow Condensed", "Arial Narrow", sans-serif;
-  --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --brand: #C8102E;
+  --brand-dark: #8E0B20;
+  --accent: #FBCE07;
+  --f-display: "Poppins", "Arial Black", sans-serif;
+  --f-body: "Poppins", "Segoe UI", system-ui, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
   color-scheme: dark;
 }
@@ -32,14 +32,14 @@ body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font
 .row { display: flex; gap: 8px; align-items: center; }
 .btn { font: 600 14px/1 var(--f-body); background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; cursor: pointer; transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1); }
 .btn:active { transform: scale(0.97); }
-.btn.primary { background: var(--accent); color: #1E1205; border-color: var(--accent); min-width: 92px; }
+.btn.primary { background: var(--accent); color: #1A1400; border-color: var(--accent); min-width: 92px; }
 .btn:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .time { margin-left: auto; font: 13px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
 .info { display: grid; gap: 22px; min-width: 0; }
 .eyebrow { font: 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(36px, 6vw, 56px); line-height: 1; text-transform: uppercase; margin: 6px 0 10px; text-wrap: balance; }
-h2 { font-family: var(--f-display); font-weight: 600; font-size: 21px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0 0 6px; }
+h1 { font-family: var(--f-display); font-weight: 800; font-style: italic; font-size: clamp(36px, 6vw, 56px); line-height: 1; text-transform: uppercase; margin: 6px 0 10px; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 800; font-style: italic; font-size: 21px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0 0 6px; }
 p { margin: 0; }
 .muted { color: var(--muted); }
 .beats { list-style: none; margin: 0; padding: 0; display: grid; }
@@ -49,12 +49,12 @@ p { margin: 0; }
 .beats li.on .t { color: var(--accent); }
 .beats b { font-weight: 600; }
 
-.sign { font-family: var(--f-display); font-weight: 700; font-size: 21px; letter-spacing: 2px; }
-.small-sign { font-family: var(--f-display); font-weight: 600; font-size: 9px; letter-spacing: 1.5px; }
+.sign { font-family: var(--f-display); font-weight: 800; font-style: italic; font-size: 17px; letter-spacing: 0.5px; }
+.small-sign { font-family: var(--f-display); font-weight: 800; font-style: italic; font-size: 8px; letter-spacing: 0.5px; }
 .digits { font-family: var(--f-mono); font-size: 10px; }
-.end-kicker { font-family: var(--f-display); font-weight: 600; font-size: 24px; letter-spacing: 7px; }
-.end-title { font-family: var(--f-display); font-weight: 700; font-size: 74px; letter-spacing: 1px; }
-.end-sub { font-family: var(--f-body); font-weight: 500; font-size: 17px; }
+.end-kicker { font-family: var(--f-display); font-weight: 800; font-style: italic; font-size: 20px; letter-spacing: 4px; }
+.end-title { font-family: var(--f-display); font-weight: 800; font-style: italic; font-size: 56px; }
+.end-sub { font-family: var(--f-body); font-weight: 500; font-size: 14px; }
 </style>
 
 <div class="wrap">
@@ -89,7 +89,7 @@ p { margin: 0; }
           <!-- Convenience store behind -->
           <rect x="-20" y="330" width="130" height="142" fill="#1B2140"/>
           <rect x="-20" y="330" width="130" height="8" fill="#232A52"/>
-          <text class="small-sign" x="48" y="360" text-anchor="middle" fill="#F28C28" id="convSign" opacity="0.3">CONVENIÊNCIA</text>
+          <text class="small-sign" x="48" y="360" text-anchor="middle" fill="#FBCE07" id="convSign" opacity="0.3">CONVENIÊNCIA</text>
           <rect x="6" y="376" width="84" height="44" fill="#FFD48A" id="convWin" opacity="0.08"/>
           <line x1="48" y1="376" x2="48" y2="420" stroke="#1B2140" stroke-width="3"/>
 
@@ -103,25 +103,25 @@ p { margin: 0; }
 
           <!-- Flag on the canopy -->
           <line x1="40" y1="246" x2="40" y2="166" stroke="#C9CFDB" stroke-width="2.5"/>
-          <polygon id="flag" fill="#0F5E63"/>
-          <polygon id="flagStripe" fill="#F28C28"/>
+          <polygon id="flag" fill="#C8102E"/>
+          <polygon id="flagStripe" fill="#FBCE07"/>
 
           <!-- Canopy -->
           <rect x="70" y="286" width="12" height="184" fill="#C9CFDB"/>
           <rect x="278" y="286" width="12" height="184" fill="#C9CFDB"/>
           <g id="cones"></g>
-          <rect x="20" y="246" width="320" height="40" fill="#0F5E63"/>
-          <rect x="20" y="278" width="320" height="6" fill="#F28C28"/>
-          <rect x="26" y="286" width="308" height="6" fill="#0A3E42"/>
-          <text class="sign" x="180" y="271" text-anchor="middle" fill="#FFFFFF" opacity="0.28">AUTO POSTO SANTA FÉ</text>
-          <text class="sign" id="signLit" x="180" y="271" text-anchor="middle" fill="#FFFFFF" opacity="0">AUTO POSTO SANTA FÉ</text>
+          <rect x="20" y="246" width="320" height="40" fill="#C8102E"/>
+          <rect x="20" y="278" width="320" height="6" fill="#FBCE07"/>
+          <rect x="26" y="286" width="308" height="6" fill="#8E0B20"/>
+          <text class="sign" x="180" y="270" text-anchor="middle" fill="#FFFFFF" opacity="0.28">AUTO POSTO SANTA FÉ</text>
+          <text class="sign" id="signLit" x="180" y="270" text-anchor="middle" fill="#FFFFFF" opacity="0">AUTO POSTO SANTA FÉ</text>
           <g id="bars"></g>
 
           <!-- Pump -->
           <rect x="140" y="452" width="80" height="14" fill="#C9CFDB"/>
           <rect x="158" y="352" width="44" height="102" rx="4" fill="#ECEFF4"/>
-          <rect x="158" y="352" width="44" height="12" rx="3" fill="#0F5E63"/>
-          <rect x="158" y="362" width="44" height="3" fill="#F28C28"/>
+          <rect x="158" y="352" width="44" height="12" rx="3" fill="#C8102E"/>
+          <rect x="158" y="362" width="44" height="3" fill="#FBCE07"/>
           <rect x="164" y="372" width="32" height="24" rx="2" fill="#0B1F22"/>
           <text x="167" y="380" class="digits" font-size="5" fill="#7CF3B0" opacity="0.7" style="font-size:5px">LITROS</text>
           <text id="liters" x="193" y="392" class="digits" text-anchor="end" fill="#7CF3B0">00,00</text>
@@ -133,14 +133,14 @@ p { margin: 0; }
             <ellipse cx="2" cy="-1" rx="66" ry="4.5" fill="#000" opacity="0.4"/>
             <g id="carBody">
               <polygon points="-62,-30 -62,-25 -200,4 -200,-26" fill="url(#gBeam)"/>
-              <path d="M-62 -14 L-62 -26 C-62 -32 -56 -34 -48 -35 L-30 -37 C-22 -50 -12 -56 4 -56 L26 -56 C38 -56 46 -48 52 -38 L60 -36 C64 -35 66 -31 66 -26 L66 -14 Z" fill="#E04A3A"/>
-              <path d="M-24 -38 C-17 -49 -9 -52 1 -52 L1 -38 Z" fill="#A9CBEB" opacity="0.85"/>
-              <path d="M6 -52 L24 -52 C33 -52 40 -46 45 -38 L6 -38 Z" fill="#A9CBEB" opacity="0.85"/>
-              <line x1="3" y1="-38" x2="3" y2="-16" stroke="#B43529" stroke-width="1.4"/>
-              <rect x="-8" y="-33" width="7" height="2" rx="1" fill="#B43529"/>
+              <path d="M-62 -14 L-62 -26 C-62 -32 -56 -34 -48 -35 L-30 -37 C-22 -50 -12 -56 4 -56 L26 -56 C38 -56 46 -48 52 -38 L60 -36 C64 -35 66 -31 66 -26 L66 -14 Z" fill="#E3E8EE"/>
+              <path d="M-24 -38 C-17 -49 -9 -52 1 -52 L1 -38 Z" fill="#5E6B7D" opacity="0.85"/>
+              <path d="M6 -52 L24 -52 C33 -52 40 -46 45 -38 L6 -38 Z" fill="#5E6B7D" opacity="0.85"/>
+              <line x1="3" y1="-38" x2="3" y2="-16" stroke="#9AA4B2" stroke-width="1.4"/>
+              <rect x="-8" y="-33" width="7" height="2" rx="1" fill="#9AA4B2"/>
               <rect x="-62" y="-31" width="7" height="5" rx="1.5" fill="#FFF6D8"/>
               <rect x="61" y="-31" width="5" height="6" rx="1.5" fill="#FF5A4A"/>
-              <rect x="40" y="-34" width="6" height="3" rx="1" fill="#B43529"/>
+              <rect x="40" y="-34" width="6" height="3" rx="1" fill="#9AA4B2"/>
             </g>
             <g id="wheelF" transform="translate(-38 -13)">
               <circle r="13" fill="#15171C"/><circle r="6.5" fill="#C9CFDB"/>
@@ -166,13 +166,13 @@ p { margin: 0; }
 
         <!-- End card -->
         <g id="endPanel" transform="translate(0 640)">
-          <rect x="0" y="0" width="360" height="640" fill="#0F5E63"/>
-          <rect x="0" y="600" width="360" height="40" fill="#F28C28"/>
+          <rect x="0" y="0" width="360" height="640" fill="#C8102E"/>
+          <polygon points="0,560 360,470 360,500 0,590" fill="#FBCE07"/><polygon points="0,598 360,508 360,640 0,640" fill="#8E0B20"/>
         </g>
-        <g id="kicker" opacity="0"><text class="end-kicker" x="180" y="272" text-anchor="middle" fill="#F28C28">AUTO POSTO</text></g>
+        <g id="kicker" opacity="0"><text class="end-kicker" x="180" y="272" text-anchor="middle" fill="#FBCE07">AUTO POSTO</text></g>
         <g id="title" opacity="0"><text class="end-title" x="180" y="338" text-anchor="middle" fill="#FFFFFF">SANTA FÉ</text></g>
-        <line id="underline" x1="110" y1="360" x2="250" y2="360" stroke="#F28C28" stroke-width="4" stroke-linecap="round" stroke-dasharray="140" stroke-dashoffset="140"/>
-        <g id="slogan" opacity="0"><text class="end-sub" x="180" y="396" text-anchor="middle" fill="#FFFFFF" opacity="0.9">Abasteça com confiança.</text></g>
+        <line id="underline" x1="110" y1="360" x2="250" y2="360" stroke="#FBCE07" stroke-width="4" stroke-linecap="round" stroke-dasharray="140" stroke-dashoffset="140"/>
+        <g id="slogan" opacity="0"><text class="end-sub" x="180" y="398" text-anchor="middle" fill="#FFFFFF">Primeiro posto da cidade · Aberto 24h</text><text class="end-sub" x="180" y="420" text-anchor="middle" fill="#FBCE07">GO-060, Km 42 · Santa Bárbara de Goiás</text></g>
       </svg>
     </div>
     <div class="player">
@@ -187,9 +187,9 @@ p { margin: 0; }
 
   <section class="info">
     <div>
-      <span class="eyebrow">Rascunho · Reels e Stories 9:16 · 16 s</span>
+      <span class="eyebrow">Vinheta · Reels e Stories 9:16 · 16 s</span>
       <h1>Auto Posto Santa Fé</h1>
-      <p class="muted">Vinheta institucional. As cores, o carro e a frase final são provisórios e serão trocados pela identidade do posto.</p>
+      <p class="muted">Vinheta institucional com as cores e a tipografia do posto. Falta aplicar o logo SF.</p>
     </div>
     <div>
       <h2>Roteiro da cena</h2>
@@ -198,7 +198,7 @@ p { margin: 0; }
         <li data-a="2500" data-b="5900"><span class="t">2,5–5,9 s</span><span><b>O carro chega.</b> Entra já em movimento, freia, a frente abaixa e balança de volta ao parar na bomba.</span></li>
         <li data-a="5900" data-b="9700"><span class="t">5,9–9,7 s</span><span><b>Abastece.</b> O bico sai da bomba até o carro e o visor conta os litros.</span></li>
         <li data-a="9700" data-b="11800"><span class="t">9,7–11,8 s</span><span><b>Segue viagem.</b> O carro arranca, a frente sobe na aceleração e ele sai de cena.</span></li>
-        <li data-a="11800" data-b="16001"><span class="t">11,8–16 s</span><span><b>Assinatura.</b> O painel sobe e aparecem o nome do posto e a frase.</span></li>
+        <li data-a="11800" data-b="16001"><span class="t">11,8–16 s</span><span><b>Assinatura.</b> O painel sobe e aparecem o nome do posto e a assinatura: primeiro posto da cidade, aberto 24h, GO-060, Km 42.</span></li>
       </ol>
     </div>
   </section>
