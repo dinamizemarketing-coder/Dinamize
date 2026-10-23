@@ -1,0 +1,436 @@
+<title>Auto Posto Santa Fé · rascunho</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: the vertical film beside its beat sheet. Brand colors are placeholders until the real ones arrive. */
+:root {
+  --bg: #0C0F14;
+  --surface: #151A22;
+  --fg: #EEF1F5;
+  --muted: #8F98A6;
+  --line: #262D38;
+  --brand: #0F5E63;
+  --brand-dark: #0A3E42;
+  --accent: #F28C28;
+  --f-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.wrap {
+  max-width: 980px; margin: 0 auto; padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 36px; align-items: start;
+}
+@media (max-width: 760px) { .wrap { grid-template-columns: minmax(0, 1fr); justify-items: center; } .info { width: 100%; } }
+.film { width: 100%; max-width: 360px; aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; background: #000; box-shadow: 0 0 0 1px var(--line), 0 30px 80px rgba(0, 0, 0, 0.5); }
+.film svg { display: block; width: 100%; height: 100%; }
+.player { display: grid; gap: 10px; margin-top: 14px; width: 100%; max-width: 360px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.btn { font: 600 14px/1 var(--f-body); background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; cursor: pointer; transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1); }
+.btn:active { transform: scale(0.97); }
+.btn.primary { background: var(--accent); color: #1E1205; border-color: var(--accent); min-width: 92px; }
+.btn:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.time { margin-left: auto; font: 13px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
+.info { display: grid; gap: 22px; min-width: 0; }
+.eyebrow { font: 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(36px, 6vw, 56px); line-height: 1; text-transform: uppercase; margin: 6px 0 10px; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 21px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0 0 6px; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.beats { list-style: none; margin: 0; padding: 0; display: grid; }
+.beats li { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 14px; padding: 10px 0; border-top: 1px solid var(--line); color: var(--muted); }
+.beats li .t { font: 13px var(--f-mono); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.beats li.on { color: var(--fg); }
+.beats li.on .t { color: var(--accent); }
+.beats b { font-weight: 600; }
+
+.sign { font-family: var(--f-display); font-weight: 700; font-size: 21px; letter-spacing: 2px; }
+.small-sign { font-family: var(--f-display); font-weight: 600; font-size: 9px; letter-spacing: 1.5px; }
+.digits { font-family: var(--f-mono); font-size: 10px; }
+.end-kicker { font-family: var(--f-display); font-weight: 600; font-size: 24px; letter-spacing: 7px; }
+.end-title { font-family: var(--f-display); font-weight: 700; font-size: 74px; letter-spacing: 1px; }
+.end-sub { font-family: var(--f-body); font-weight: 500; font-size: 17px; }
+</style>
+
+<div class="wrap">
+  <div>
+    <div class="film">
+      <svg id="scene" viewBox="0 0 360 640" role="img" aria-label="Posto de combustível à noite: as luzes da cobertura acendem, um carro chega, abastece e vai embora, e aparece o nome Auto Posto Santa Fé">
+        <defs>
+          <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0A1230"/>
+            <stop offset="1" stop-color="#2A3A74"/>
+          </linearGradient>
+          <linearGradient id="gCone" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFF4D6" stop-opacity="0.30"/>
+            <stop offset="1" stop-color="#FFF4D6" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="gBeam" x1="1" y1="0" x2="0" y2="0">
+            <stop offset="0" stop-color="#FFF6D8" stop-opacity="0.35"/>
+            <stop offset="1" stop-color="#FFF6D8" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="gMoon">
+            <stop offset="0.45" stop-color="#F4EBC8" stop-opacity="0.25"/>
+            <stop offset="1" stop-color="#F4EBC8" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <g id="cam">
+          <rect x="-40" y="-40" width="440" height="520" fill="url(#gSky)"/>
+          <g id="stars"></g>
+          <circle cx="292" cy="92" r="42" fill="url(#gMoon)"/>
+          <circle cx="292" cy="92" r="15" fill="#F4EBC8"/>
+
+          <!-- Convenience store behind -->
+          <rect x="-20" y="330" width="130" height="142" fill="#1B2140"/>
+          <rect x="-20" y="330" width="130" height="8" fill="#232A52"/>
+          <text class="small-sign" x="48" y="360" text-anchor="middle" fill="#F28C28" id="convSign" opacity="0.3">CONVENIÊNCIA</text>
+          <rect x="6" y="376" width="84" height="44" fill="#FFD48A" id="convWin" opacity="0.08"/>
+          <line x1="48" y1="376" x2="48" y2="420" stroke="#1B2140" stroke-width="3"/>
+
+          <!-- Ground -->
+          <rect x="-40" y="470" width="440" height="210" fill="#22252E"/>
+          <rect x="-40" y="468" width="440" height="5" fill="#3A3F4C"/>
+          <g fill="#E9E4D2" opacity="0.35">
+            <rect x="-10" y="572" width="40" height="5"/><rect x="70" y="572" width="40" height="5"/>
+            <rect x="150" y="572" width="40" height="5"/><rect x="230" y="572" width="40" height="5"/><rect x="310" y="572" width="40" height="5"/>
+          </g>
+
+          <!-- Flag on the canopy -->
+          <line x1="40" y1="246" x2="40" y2="166" stroke="#C9CFDB" stroke-width="2.5"/>
+          <polygon id="flag" fill="#0F5E63"/>
+          <polygon id="flagStripe" fill="#F28C28"/>
+
+          <!-- Canopy -->
+          <rect x="70" y="286" width="12" height="184" fill="#C9CFDB"/>
+          <rect x="278" y="286" width="12" height="184" fill="#C9CFDB"/>
+          <g id="cones"></g>
+          <rect x="20" y="246" width="320" height="40" fill="#0F5E63"/>
+          <rect x="20" y="278" width="320" height="6" fill="#F28C28"/>
+          <rect x="26" y="286" width="308" height="6" fill="#0A3E42"/>
+          <text class="sign" x="180" y="271" text-anchor="middle" fill="#FFFFFF" opacity="0.28">AUTO POSTO SANTA FÉ</text>
+          <text class="sign" id="signLit" x="180" y="271" text-anchor="middle" fill="#FFFFFF" opacity="0">AUTO POSTO SANTA FÉ</text>
+          <g id="bars"></g>
+
+          <!-- Pump -->
+          <rect x="140" y="452" width="80" height="14" fill="#C9CFDB"/>
+          <rect x="158" y="352" width="44" height="102" rx="4" fill="#ECEFF4"/>
+          <rect x="158" y="352" width="44" height="12" rx="3" fill="#0F5E63"/>
+          <rect x="158" y="362" width="44" height="3" fill="#F28C28"/>
+          <rect x="164" y="372" width="32" height="24" rx="2" fill="#0B1F22"/>
+          <text x="167" y="380" class="digits" font-size="5" fill="#7CF3B0" opacity="0.7" style="font-size:5px">LITROS</text>
+          <text id="liters" x="193" y="392" class="digits" text-anchor="end" fill="#7CF3B0">00,00</text>
+          <circle id="led" cx="191" cy="378" r="1.6" fill="#7CF3B0" opacity="0.25"/>
+          <rect x="202" y="396" width="7" height="14" rx="2" fill="#AEB6C4"/>
+
+          <!-- Car -->
+          <g id="car">
+            <ellipse cx="2" cy="-1" rx="66" ry="4.5" fill="#000" opacity="0.4"/>
+            <g id="carBody">
+              <polygon points="-62,-30 -62,-25 -200,4 -200,-26" fill="url(#gBeam)"/>
+              <path d="M-62 -14 L-62 -26 C-62 -32 -56 -34 -48 -35 L-30 -37 C-22 -50 -12 -56 4 -56 L26 -56 C38 -56 46 -48 52 -38 L60 -36 C64 -35 66 -31 66 -26 L66 -14 Z" fill="#E04A3A"/>
+              <path d="M-24 -38 C-17 -49 -9 -52 1 -52 L1 -38 Z" fill="#A9CBEB" opacity="0.85"/>
+              <path d="M6 -52 L24 -52 C33 -52 40 -46 45 -38 L6 -38 Z" fill="#A9CBEB" opacity="0.85"/>
+              <line x1="3" y1="-38" x2="3" y2="-16" stroke="#B43529" stroke-width="1.4"/>
+              <rect x="-8" y="-33" width="7" height="2" rx="1" fill="#B43529"/>
+              <rect x="-62" y="-31" width="7" height="5" rx="1.5" fill="#FFF6D8"/>
+              <rect x="61" y="-31" width="5" height="6" rx="1.5" fill="#FF5A4A"/>
+              <rect x="40" y="-34" width="6" height="3" rx="1" fill="#B43529"/>
+            </g>
+            <g id="wheelF" transform="translate(-38 -13)">
+              <circle r="13" fill="#15171C"/><circle r="6.5" fill="#C9CFDB"/>
+              <g id="spokeF" stroke="#7D8594" stroke-width="1.6"><line x1="-6" y1="0" x2="6" y2="0"/><line x1="-3" y1="-5.2" x2="3" y2="5.2"/><line x1="-3" y1="5.2" x2="3" y2="-5.2"/></g>
+            </g>
+            <g id="wheelR" transform="translate(42 -13)">
+              <circle r="13" fill="#15171C"/><circle r="6.5" fill="#C9CFDB"/>
+              <g id="spokeR" stroke="#7D8594" stroke-width="1.6"><line x1="-6" y1="0" x2="6" y2="0"/><line x1="-3" y1="-5.2" x2="3" y2="5.2"/><line x1="-3" y1="5.2" x2="3" y2="-5.2"/></g>
+            </g>
+          </g>
+          <g id="puffs"></g>
+
+          <!-- Hose and nozzle: behind the car at the pump, in front of it while fueling -->
+          <g id="fuel">
+          <path id="hose" fill="none" stroke="#2A2E38" stroke-width="2.6" stroke-linecap="round"/>
+          <g id="nozzle">
+            <rect x="-3" y="-6" width="6" height="12" rx="1.5" fill="#2A2E38"/>
+            <line x1="0" y1="6" x2="0" y2="13" stroke="#8E96A6" stroke-width="2.2" stroke-linecap="round"/>
+          </g>
+          </g>
+          <g id="lightPools"></g>
+        </g>
+
+        <!-- End card -->
+        <g id="endPanel" transform="translate(0 640)">
+          <rect x="0" y="0" width="360" height="640" fill="#0F5E63"/>
+          <rect x="0" y="600" width="360" height="40" fill="#F28C28"/>
+        </g>
+        <g id="kicker" opacity="0"><text class="end-kicker" x="180" y="272" text-anchor="middle" fill="#F28C28">AUTO POSTO</text></g>
+        <g id="title" opacity="0"><text class="end-title" x="180" y="338" text-anchor="middle" fill="#FFFFFF">SANTA FÉ</text></g>
+        <line id="underline" x1="110" y1="360" x2="250" y2="360" stroke="#F28C28" stroke-width="4" stroke-linecap="round" stroke-dasharray="140" stroke-dashoffset="140"/>
+        <g id="slogan" opacity="0"><text class="end-sub" x="180" y="396" text-anchor="middle" fill="#FFFFFF" opacity="0.9">Abasteça com confiança.</text></g>
+      </svg>
+    </div>
+    <div class="player">
+      <div class="row">
+        <button id="play" class="btn primary" type="button">Pausar</button>
+        <button id="restart" class="btn" type="button">Do início</button>
+        <span class="time" id="time">0,0 s</span>
+      </div>
+      <input id="scrub" type="range" min="0" max="16000" step="10" value="0" aria-label="Posição no vídeo">
+    </div>
+  </div>
+
+  <section class="info">
+    <div>
+      <span class="eyebrow">Rascunho · Reels e Stories 9:16 · 16 s</span>
+      <h1>Auto Posto Santa Fé</h1>
+      <p class="muted">Vinheta institucional. As cores, o carro e a frase final são provisórios e serão trocados pela identidade do posto.</p>
+    </div>
+    <div>
+      <h2>Roteiro da cena</h2>
+      <ol class="beats" id="beats">
+        <li data-a="0" data-b="2500"><span class="t">0–2,5 s</span><span><b>O posto acende.</b> As luzes da cobertura ligam uma a uma, piscando como lâmpada de verdade, e o letreiro se ilumina.</span></li>
+        <li data-a="2500" data-b="5900"><span class="t">2,5–5,9 s</span><span><b>O carro chega.</b> Entra já em movimento, freia, a frente abaixa e balança de volta ao parar na bomba.</span></li>
+        <li data-a="5900" data-b="9700"><span class="t">5,9–9,7 s</span><span><b>Abastece.</b> O bico sai da bomba até o carro e o visor conta os litros.</span></li>
+        <li data-a="9700" data-b="11800"><span class="t">9,7–11,8 s</span><span><b>Segue viagem.</b> O carro arranca, a frente sobe na aceleração e ele sai de cena.</span></li>
+        <li data-a="11800" data-b="16001"><span class="t">11,8–16 s</span><span><b>Assinatura.</b> O painel sobe e aparecem o nome do posto e a frase.</span></li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const $ = (id) => document.getElementById(id);
+  const set = (el, a) => { for (const k in a) el.setAttribute(k, a[k]); };
+  const el = (tag, a, p) => { const n = document.createElementNS(SVGNS, tag); set(n, a); p.appendChild(n); return n; };
+  const R = Math.PI / 180;
+  const n2 = (v) => v.toFixed(2);
+
+  // ---- Engine (the skill's motion.ts, on requestAnimationFrame) ----
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dsx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => {
+      if (x <= 0) return 0;
+      if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const d = sx(t) - x; if (Math.abs(d) < 1e-6) break; const dd = dsx(t); if (Math.abs(dd) < 1e-6) break; t -= d / dd; }
+      if (t < 0 || t > 1 || Math.abs(sx(t) - x) > 1e-4) { let lo = 0, hi = 1; t = x; for (let i = 0; i < 40; i++) { if (sx(t) < x) lo = t; else hi = t; t = (lo + hi) / 2; } }
+      return sy(t);
+    };
+  }
+  const EASE_IN_OUT = bezier(0.77, 0, 0.175, 1);
+  const EASE_OUT = bezier(0.23, 1, 0.32, 1);
+  function track(t, keys) {
+    if (t <= keys[0][0]) return keys[0][1];
+    for (let i = 1; i < keys.length; i++) {
+      const k1 = keys[i];
+      if (t <= k1[0]) {
+        const k0 = keys[i - 1], span = k1[0] - k0[0], p = span > 0 ? (t - k0[0]) / span : 1;
+        return k0[1] + (k1[1] - k0[1]) * (k1[2] === "out" ? EASE_OUT(p) : EASE_IN_OUT(p));
+      }
+    }
+    return keys[keys.length - 1][1];
+  }
+  function flow(t, k) {
+    const n = k.length;
+    if (t <= k[0][0]) return k[0][1];
+    if (t >= k[n - 1][0]) return k[n - 1][1];
+    let i = 0;
+    while (k[i + 1][0] < t) i++;
+    const slope = (j) => (k[j + 1][1] - k[j][1]) / (k[j + 1][0] - k[j][0]);
+    const tangent = (j) => {
+      if (j === 0 || j === n - 1) return 0;
+      const a = slope(j - 1), b = slope(j);
+      if (a * b <= 0) return 0;
+      const h0 = k[j][0] - k[j - 1][0], h1 = k[j + 1][0] - k[j][0], w0 = 2 * h1 + h0, w1 = h1 + 2 * h0;
+      return (w0 + w1) / (w0 / a + w1 / b);
+    };
+    const h = k[i + 1][0] - k[i][0], s = (t - k[i][0]) / h, s2 = s * s, s3 = s2 * s;
+    return (2 * s3 - 3 * s2 + 1) * k[i][1] + (s3 - 2 * s2 + s) * h * tangent(i) + (-2 * s3 + 3 * s2) * k[i + 1][1] + (s3 - s2) * h * tangent(i + 1);
+  }
+  function seg(t, a, b, curve = "out") {
+    if (t <= a) return 0;
+    if (t >= b) return 1;
+    const p = (t - a) / (b - a);
+    return curve === "out" ? EASE_OUT(p) : EASE_IN_OUT(p);
+  }
+  const wave = (t, period, phase = 0) => Math.sin((t / period + phase) * Math.PI * 2);
+  const loop = (t, period, phase = 0) => { const p = (t / period + phase) % 1; return p < 0 ? p + 1 : p; };
+  const bell = (p) => Math.sin(Math.PI * Math.min(1, Math.max(0, p)));
+  const seeded = (i, salt = 0) => { const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453; return x - Math.floor(x); };
+
+  // ---- Tokens ----
+  const DURATION = 16000;
+  const STOP = 5200;            // the car stops at the pump
+  const LEAVE = 9700;           // the car pulls away
+  const END = 11800;            // the end card rises
+  const LITERS = 42.3;
+  const WHEEL_R = 13;
+
+  const CAR_X = [[2500, 470], [3700, 285], [4700, 196], [STOP, 180], [LEAVE, 180], [10300, 150], [11400, -160]];
+  const PITCH = [[0, 0], [4300, 0], [4900, -1.8], [STOP, -2], [5450, 0.8], [5750, -0.25], [6050, 0],
+                 [LEAVE, 0], [10050, 1.8], [10700, 0.6], [11400, 0.3]];
+  const LIGHT_ORDER = [2, 0, 4, 1, 3];
+  const LIGHT_X = [58, 118, 180, 242, 302];
+  const lightKeys = LIGHT_ORDER.map((_, k) => {
+    const t0 = 700 + LIGHT_ORDER.indexOf(k) * 180;
+    return [[0, 0], [t0, 0], [t0 + 60, 0.9], [t0 + 130, 0.15], [t0 + 210, 1, "out"]];
+  });
+  // One tube flickers once later on: rare, never constant.
+  lightKeys[4] = lightKeys[4].concat([[8200, 1], [8270, 0.35], [8340, 1, "out"]]);
+
+  const carX = (t) => flow(t, CAR_X);
+
+  // ---- Static pieces ----
+  const starsG = $("stars");
+  const stars = Array.from({ length: 22 }, (_, i) => ({
+    i, el: el("circle", { cx: n2(8 + seeded(i) * 344), cy: n2(14 + seeded(i, 1) * 200), r: n2(0.6 + seeded(i, 2) * 0.9), fill: "#F2F4FF" }, starsG),
+  }));
+  const conesG = $("cones"), barsG = $("bars"), poolsG = $("lightPools");
+  const lights = LIGHT_X.map((x) => ({
+    cone: el("polygon", { points: `${x - 15},293 ${x + 15},293 ${x + 40},470 ${x - 40},470`, fill: "url(#gCone)", opacity: 0 }, conesG),
+    bar: el("rect", { x: x - 15, y: 289, width: 30, height: 4, rx: 1, fill: "#FFF6D8", opacity: 0.15 }, barsG),
+    pool: el("ellipse", { cx: x, cy: 472, rx: 42, ry: 6, fill: "#FFF1C8", opacity: 0 }, poolsG),
+  }));
+  const puffsG = $("puffs");
+  const puffs = [0, 1, 2].map(() => el("circle", { fill: "#AEB6C4", r: 3, opacity: 0 }, puffsG));
+
+  const E = {};
+  ["cam", "flag", "flagStripe", "signLit", "convSign", "convWin", "car", "carBody", "wheelF", "wheelR", "spokeF", "spokeR",
+   "hose", "nozzle", "fuel", "puffs", "liters", "led", "endPanel", "kicker", "title", "underline", "slogan"].forEach((id) => { E[id] = $(id); });
+
+  let fuelInFront = true;
+  function render(t) {
+    const zoom = 1.22 + 0.05 * seg(t, 0, END, "inOut");
+    set(E.cam, { transform: `translate(180 500) scale(${zoom.toFixed(4)}) translate(-180 -440)` });
+
+    // Stars twinkle at their own pace.
+    stars.forEach((s) => set(s.el, { opacity: (0.55 + 0.4 * wave(t, 1600 + seeded(s.i, 3) * 1800, seeded(s.i, 4))).toFixed(3) }));
+
+    // Lights: each tube flickers on, in its own order.
+    let lit = 0;
+    lights.forEach((L, k) => {
+      const I = track(t, lightKeys[k]);
+      lit += I / lights.length;
+      set(L.bar, { opacity: (0.15 + 0.85 * I).toFixed(3) });
+      set(L.cone, { opacity: I.toFixed(3) });
+      set(L.pool, { opacity: (0.13 * I).toFixed(3) });
+    });
+    const sign = seg(t, 1500, 1900);
+    set(E.signLit, { opacity: sign.toFixed(3) });
+    const conv = seg(t, 1200, 1700);
+    set(E.convSign, { opacity: (0.3 + 0.7 * conv).toFixed(3) });
+    set(E.convWin, { opacity: (0.08 + 0.62 * conv).toFixed(3) });
+
+    // Flag: a wave travels away from the pole and grows toward the free edge.
+    const top = [], bot = [];
+    for (let k = 0; k <= 8; k++) {
+      const x = 40 + k * 5.8;
+      const dy = 3.2 * (k / 8) * wave(t, 1400, -k * 0.09);
+      top.push(`${n2(x)},${n2(172 + dy)}`);
+      bot.unshift(`${n2(x)},${n2(200 + dy)}`);
+    }
+    set(E.flag, { points: top.concat(bot).join(" ") });
+    const sTop = [], sBot = [];
+    for (let k = 0; k <= 8; k++) {
+      const x = 40 + k * 5.8;
+      const dy = 3.2 * (k / 8) * wave(t, 1400, -k * 0.09);
+      sTop.push(`${n2(x)},${n2(183 + dy)}`);
+      sBot.unshift(`${n2(x)},${n2(189 + dy)}`);
+    }
+    set(E.flagStripe, { points: sTop.concat(sBot).join(" ") });
+
+    // Car: rolls in, brakes with a nose dive, idles, then pulls away.
+    const x = carX(t);
+    const pitch = flow(t, PITCH);
+    const idle = 0.35 * wave(t, 520);
+    set(E.car, { transform: `translate(${n2(x)} 470)` });
+    set(E.carBody, { transform: `translate(0 ${n2(idle)}) rotate(${pitch.toFixed(3)} 2 -16)` });
+    const spin = (x / WHEEL_R) / R;
+    set(E.spokeF, { transform: `rotate(${spin.toFixed(2)})` });
+    set(E.spokeR, { transform: `rotate(${spin.toFixed(2)})` });
+
+    // Exhaust: puffs rise and fade while the engine runs.
+    const engine = seg(t, 2500, 2800) * (1 - seg(t, 11200, 11500));
+    puffs.forEach((pf, k) => {
+      const p = loop(t, 1500, k / 3);
+      set(pf, { cx: n2(x + 70 + p * 16), cy: n2(456 - p * 12), r: n2(2.5 + p * 6), opacity: (0.32 * bell(p) * engine).toFixed(3) });
+    });
+
+    // Nozzle: travels from the pump to the fuel cap and back.
+    const holster = [205.5, 404];
+    const cap = [x + 58, 427];
+    const go = seg(t, 5900, 6400, "inOut") * (1 - seg(t, 9000, 9500, "inOut"));
+    const lift = 14 * Math.sin(Math.PI * go);
+    const nx = holster[0] + (cap[0] - holster[0]) * go;
+    const ny = holster[1] + (cap[1] - holster[1]) * go - lift;
+    const ang = 0 + 38 * go;
+    set(E.nozzle, { transform: `translate(${n2(nx)} ${n2(ny)}) rotate(${ang.toFixed(2)})` });
+    const hx0 = 202, hy0 = 424;
+    const inFront = go > 0.02;
+    if (inFront !== fuelInFront) { fuelInFront = inFront; (inFront ? E.puffs : E.car).insertAdjacentElement(inFront ? "beforebegin" : "beforebegin", E.fuel); }
+    set(E.hose, { d: `M${hx0} ${hy0} Q ${n2((hx0 + nx) / 2)} ${n2(Math.max(hy0, ny) + 34)} ${n2(nx)} ${n2(ny - 5)}` });
+
+    // Pump display counts up while fueling.
+    const L = LITERS * seg(t, 6400, 9000);
+    E.liters.textContent = L.toFixed(2).replace(".", ",").padStart(5, "0");
+    const fueling = t > 6400 && t < 9000;
+    set(E.led, { opacity: fueling && Math.floor(t / 400) % 2 === 0 ? 1 : 0.25 });
+
+    // End card: the panel rises, then the name, the line and the slogan.
+    const up = seg(t, END, END + 450);
+    set(E.endPanel, { transform: `translate(0 ${n2(640 * (1 - up))})` });
+    const k1 = seg(t, END + 350, END + 700), k2 = seg(t, END + 500, END + 900), k3 = seg(t, END + 1100, END + 1500);
+    set(E.kicker, { opacity: k1.toFixed(3), transform: `translate(180 262) scale(${(0.96 + 0.04 * k1).toFixed(4)}) translate(-180 -262)` });
+    set(E.title, { opacity: k2.toFixed(3), transform: `translate(180 316) scale(${(0.96 + 0.04 * k2).toFixed(4)}) translate(-180 -316)` });
+    set(E.underline, { "stroke-dashoffset": n2(140 * (1 - seg(t, END + 800, END + 1300, "inOut"))) });
+    set(E.slogan, { opacity: k3.toFixed(3) });
+  }
+  window.renderAt = render;
+  window.SCENE_DURATION = DURATION;
+
+  // ---- Player ----
+  const playBtn = $("play"), scrub = $("scrub"), timeEl = $("time");
+  const beats = Array.from(document.querySelectorAll("#beats li"));
+  let T = 0, last = null, playing = true, visible = true, running = false;
+  try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { playing = false; T = 14000; } } catch (e) {}
+  function show() {
+    render(T);
+    scrub.value = String(Math.round(T));
+    timeEl.textContent = `${(T / 1000).toFixed(1).replace(".", ",")} s`;
+    beats.forEach((b) => b.classList.toggle("on", T >= +b.dataset.a && T < +b.dataset.b));
+    playBtn.textContent = playing ? "Pausar" : "Assistir";
+  }
+  function frame(now) {
+    if (!running) return;
+    const dt = last == null ? 16 : Math.min(50, now - last);
+    last = now;
+    T += dt;
+    if (T >= DURATION) T = 0;
+    show();
+    requestAnimationFrame(frame);
+  }
+  function update() {
+    const want = playing && visible && !document.hidden;
+    if (want && !running) { running = true; last = null; requestAnimationFrame(frame); }
+    else if (!want) { running = false; show(); }
+  }
+  playBtn.addEventListener("click", () => { playing = !playing; update(); show(); });
+  $("restart").addEventListener("click", () => { T = 0; playing = true; update(); show(); });
+  scrub.addEventListener("input", () => { T = +scrub.value; show(); });
+  document.addEventListener("visibilitychange", update);
+  if ("IntersectionObserver" in window) new IntersectionObserver((e) => { visible = e[0].isIntersecting; update(); }).observe($("scene"));
+  show();
+  update();
+})();
+</script>
